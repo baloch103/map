@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ايڊمن ڪنٽرول پينل - گوگل ريويو پورٽل</title>
+    <title>ايڊمن پينل - گوگل ريويو پورٽل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -11,194 +11,175 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen p-4">
 
-    <div class="max-w-5xl mx-auto space-y-6">
+    <div class="max-w-2xl mx-auto space-y-6">
 
-        <header class="bg-slate-900 text-white p-5 rounded-2xl flex justify-between items-center shadow-lg">
+        <!-- Admin Header -->
+        <header class="bg-slate-900 text-white p-5 rounded-2xl flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-bold">⚙️ ايڊمن ڪنٽرول پينل</h1>
-                <p class="text-xs text-slate-400 mt-1">يوزرس مئنيجمينٽ ۽ ٽاسڪ اسائينمينٽ</p>
+                <h1 class="font-bold text-lg">ایڊمن پينل (Admin Control)</h1>
+                <p id="admin-email" class="text-xs text-slate-400">چيڪ ٿي رهيو آهي...</p>
             </div>
-            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-xl text-slate-300 font-bold border border-slate-700">يوزر پورٽل تي وڃو ↗</a>
+            <button onclick="logout()" class="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg">لاگ آئوٽ</button>
         </header>
 
-        <!-- Assign New Task Form -->
-        <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-            <h2 class="font-bold text-base border-b pb-2 text-slate-800 flex items-center gap-2">
-                <span class="w-2.5 h-2.5 bg-blue-600 rounded-full"></span> نئون ٽاسڪ تيار ڪريو ۽ يوزر ڏانھن موڪليو
-            </h2>
-            <form onsubmit="assignTask(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
+        <!-- Create Task Section -->
+        <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4">
+            <h2 class="font-bold text-sm border-b pb-2 text-slate-700">➕ نئون ٽاسڪ ٺاهيو ۽ يوزر کي اسائن ڪريو</h2>
+            
+            <div class="space-y-3 text-xs">
                 <div>
-                    <label class="text-xs font-semibold block mb-1 text-slate-600">1. يوزر چونڊيو (Target User)</label>
-                    <select id="select-user" required class="w-full border p-2.5 rounded-xl text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- يوزر چونڊيو --</option>
+                    <label class="block font-semibold mb-1">يوزر چونڊيو (Assigned User):</label>
+                    <select id="user-select" class="w-full border p-2.5 rounded-xl bg-slate-50 outline-none">
+                        <option value="">يوزرس لوڊ ٿي رهيا آهن...</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold block mb-1 text-slate-600">2. ڪھڙي Gmail اڪائونٽ تان ريويو ڏيڻو آھي؟</label>
-                    <input type="email" id="target-gmail" required placeholder="example@gmail.com" class="w-full border p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block font-semibold mb-1">Target Gmail (ان ايميل تان ريويو ڏيڻو آهي):</label>
+                    <input type="email" id="target-gmail" placeholder="example@gmail.com" class="w-full border p-2.5 rounded-xl outline-none">
                 </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-xs font-semibold block mb-1 text-slate-600">3. گوگل ميپ لنڪ (Google Maps Location URL)</label>
-                    <input type="url" id="map-link" required placeholder="https://maps.app.goo.gl/..." class="w-full border p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <div>
+                    <label class="block font-semibold mb-1">Google Maps Link:</label>
+                    <input type="url" id="maps-link" placeholder="https://maps.google.com/..." class="w-full border p-2.5 rounded-xl outline-none">
                 </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-xs font-semibold block mb-1 text-slate-600">4. ريويو ٽيڪسٽ (Comment Text)</label>
-                    <textarea id="review-text" required rows="2" placeholder="جائزي جو مواد ھتي لکو..." class="w-full border p-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div>
+                    <label class="block font-semibold mb-1">ریويو ٽيڪسٽ (Review Text):</label>
+                    <textarea id="review-text" rows="3" placeholder="ريويو جو ٽيڪسٽ لکو..." class="w-full border p-2.5 rounded-xl outline-none"></textarea>
                 </div>
 
-                <div class="md:col-span-2">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm w-full transition">ٽاسڪ موڪليو (Rs. 20 Rewards)</button>
+                <div>
+                    <label class="block font-semibold mb-1">انعام / ريوارڊ (Reward PKR):</label>
+                    <input type="number" id="reward-amount" value="50" class="w-full border p-2.5 rounded-xl outline-none">
                 </div>
-            </form>
-        </div>
 
-        <!-- Registered Users List -->
-        <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-            <h2 class="font-bold text-base border-b pb-2 text-slate-800">رجسٽرڊ يوزرس جي لسٽ (Registered Users)</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-right text-sm">
-                    <thead class="bg-slate-50 text-xs text-slate-500 border-b">
-                        <tr>
-                            <th class="p-3">نالو</th>
-                            <th class="p-3">اي ميل (Email)</th>
-                            <th class="p-3">موجوده بيلنس</th>
-                            <th class="p-3">رجسٽريشن تاريخ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table-body" class="divide-y text-xs"></tbody>
-                </table>
+                <button onclick="createTask()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs">ٽاسڪ شامل ڪريو</button>
             </div>
         </div>
 
-        <!-- Pending Task Verification Requests -->
-        <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-            <h2 class="font-bold text-base border-b pb-2 text-slate-800">يوزرس پاران جمع ٿيل ثبوت (Pending Verifications)</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-right text-sm">
-                    <thead class="bg-slate-50 text-xs text-slate-500 border-b">
-                        <tr>
-                            <th class="p-3">ٽاسڪ ID</th>
-                            <th class="p-3">يوزر</th>
-                            <th class="p-3">ثبوت لنڪ</th>
-                            <th class="p-3 text-center">عمل (Action)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pending-table-body" class="divide-y text-xs"></tbody>
-                </table>
-            </div>
+        <!-- Pending Submissions -->
+        <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4">
+            <h2 class="font-bold text-sm border-b pb-2 text-slate-700">📋 يوزرس جا موڪليل ثبوت (Submissions)</h2>
+            <div id="submissions-list" class="space-y-3 text-xs"></div>
         </div>
 
     </div>
 
-  <script>
+    <script>
     const SUPABASE_URL = 'https://hhywazbkgalioqqpuhyz.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXdhemJrZ2FsaW9xcXB1aHl6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODE0OTI0MCwiZXhwIjoyMTAzNzI1MjQwfQ.yHHUaGrOn8gKy_1kgujNXupqziJZmQalVIS0F9AU0sY';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXdhemJrZ2FsaW9xcXB1aHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNDkyNDAsImV4cCI6MjEwMzcyNTI0MH0.yHHUaGrOn8gKy_1kgujNXupqziJZmQalVIS0F9AU0sY';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let globalNewsArray = [];
-            loadUsers();
-            loadPendingSubmissions();
+    async function checkAdmin() {
+        const { data: { user } } = await _supabase.auth.getUser();
+        if (!user) {
+            alert("پهرين ايڊمن طور لاگ ان ٿيو!");
+            window.location.href = "index.html";
+            return;
         }
 
-        async function loadUsers() {
-            const { data: users } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-            const userSelect = document.getElementById('select-user');
-            const userTable = document.getElementById('users-table-body');
-            
-            userSelect.innerHTML = '<option value="">-- يوزر چونڊيو --</option>';
-            userTable.innerHTML = '';
-
-            if (users) {
-                users.forEach(u => {
-                    // Populate Select Dropdown
-                    userSelect.innerHTML += `<option value="${u.id}">${u.full_name || 'No Name'} (${u.email})</option>`;
-
-                    // Populate User Table
-                    userTable.innerHTML += `
-                        <tr>
-                            <td class="p-3 font-semibold">${u.full_name || 'N/A'}</td>
-                            <td class="p-3 font-mono">${u.email}</td>
-                            <td class="p-3 font-bold text-emerald-600">Rs. ${u.balance}</td>
-                            <td class="p-3 text-slate-400">${new Date(u.created_at).toLocaleDateString()}</td>
-                        </tr>
-                    `;
-                });
-            }
+        const { data: profile } = await _supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+        if (!profile || !profile.is_admin) {
+            alert("توهان وٽ ايڊمن جا اختيار ناهن!");
+            window.location.href = "index.html";
+            return;
         }
 
-        async function assignTask(e) {
-            e.preventDefault();
-            const assigned_user_id = document.getElementById('select-user').value;
-            const target_gmail = document.getElementById('target-gmail').value;
-            const google_maps_link = document.getElementById('map-link').value;
-            const review_text = document.getElementById('review-text').value;
+        document.getElementById('admin-email').innerText = user.email;
+        loadUsers();
+        loadSubmissions();
+    }
 
-            const { error } = await supabase.from('tasks').insert([{
-                assigned_user_id,
-                target_gmail,
-                google_maps_link,
-                review_text,
-                reward: 20
-            }]);
+    async function logout() {
+        await _supabase.auth.signOut();
+        window.location.href = "index.html";
+    }
 
-            if (!error) {
-                alert('ٽاسڪ ڪاميابي سان يوزر ڏانھن موڪليو ويو!');
-                document.getElementById('target-gmail').value = '';
-                document.getElementById('map-link').value = '';
-                document.getElementById('review-text').value = '';
-            } else {
-                alert(error.message);
-            }
-        }
-
-        async function loadPendingSubmissions() {
-            const { data: subs } = await supabase.from('submissions').select('*, profiles(full_name, email)').eq('status', 'pending');
-            const tbody = document.getElementById('pending-table-body');
-            tbody.innerHTML = '';
-
-            if (subs && subs.length > 0) {
-                subs.forEach(s => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="p-3">#${s.task_id}</td>
-                            <td class="p-3 font-semibold">${s.profiles?.full_name || s.profiles?.email}</td>
-                            <td class="p-3"><a href="${s.proof_link}" target="_blank" class="text-blue-600 underline font-semibold">ثبوت لنڪ ڏسو ↗</a></td>
-                            <td class="p-3 text-center space-x-1 space-x-reverse">
-                                <button onclick="approveTask(${s.id}, '${s.user_id}', ${s.task_id})" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold">Approve (+Rs.20)</button>
-                                <button onclick="rejectTask(${s.id})" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg font-bold">Reject</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center p-4 text-slate-400">ڪو به پينڊنگ ڪم ناهي</td></tr>`;
-            }
-        }
-
-        async function approveTask(subId, userId, taskId) {
-            const { error } = await supabase.rpc('approve_submission', { 
-                sub_id: subId, 
-                req_user_id: userId, 
-                reward_amount: 20,
-                req_task_id: taskId
+    async function loadUsers() {
+        const { data: profiles } = await _supabase.from('profiles').select('id, email');
+        const select = document.getElementById('user-select');
+        select.innerHTML = '<option value="">-- يوزر منتخب ڪريو --</option>';
+        if (profiles) {
+            profiles.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.email}</option>`;
             });
-            if (!error) {
-                alert('ٽاسڪ اپروو ٿي ويو!');
-                loadPendingSubmissions();
-                loadUsers();
-            } else alert(error.message);
+        }
+    }
+
+    async function createTask() {
+        const userId = document.getElementById('user-select').value;
+        const targetGmail = document.getElementById('target-gmail').value;
+        const mapsLink = document.getElementById('maps-link').value;
+        const reviewText = document.getElementById('review-text').value;
+        const reward = document.getElementById('reward-amount').value;
+
+        if (!userId || !mapsLink || !reviewText) {
+            return alert("مهرباني ڪري سڀ معلومات داخل ڪريو!");
         }
 
-        async function rejectTask(subId) {
-            await supabase.from('submissions').update({ status: 'rejected' }).eq('id', subId);
-            loadPendingSubmissions();
-        }
+        const { error } = await _supabase.from('tasks').insert([{
+            assigned_user_id: userId,
+            target_gmail: targetGmail,
+            google_maps_link: mapsLink,
+            review_text: reviewText,
+            reward: parseFloat(reward),
+            status: 'active'
+        }]);
 
-        document.addEventListener('DOMContentLoaded', initAdmin);
+        if (!error) {
+            alert("ٽاسڪ ڪاميابي سان مڪمل ٿيو!");
+            document.getElementById('target-gmail').value = '';
+            document.getElementById('maps-link').value = '';
+            document.getElementById('review-text').value = '';
+        } else {
+            alert(error.message);
+        }
+    }
+
+    async function loadSubmissions() {
+        const { data: subs } = await _supabase.from('submissions')
+            .select('*, tasks(*), profiles(*)')
+            .eq('status', 'pending');
+
+        const list = document.getElementById('submissions-list');
+        list.innerHTML = '';
+
+        if (subs && subs.length > 0) {
+            subs.forEach(s => {
+                list.innerHTML += `
+                    <div class="border p-3 rounded-xl space-y-2 bg-slate-50">
+                        <div class="flex justify-between font-bold text-slate-700">
+                            <span>يوزر: ${s.profiles?.email || 'N/A'}</span>
+                            <span class="text-emerald-600">Rs. ${s.tasks?.reward} PKR</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500"><strong>Proof Link:</strong> <a href="${s.proof_link}" target="_blank" class="text-blue-600 underline">${s.proof_link}</a></p>
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="approveSubmission(${s.id}, '${s.user_id}', ${s.tasks?.reward}, ${s.task_id})" class="bg-emerald-600 text-white px-3 py-1 rounded-lg font-bold">Approve</button>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            list.innerHTML = `<p class="text-slate-400 text-center py-4">ڪو به نئون پينڊنگ ثبوت ناهي.</p>`;
+        }
+    }
+
+    async function approveSubmission(subId, userId, rewardAmount, taskId) {
+        // 1. Mark submission approved
+        await _supabase.from('submissions').update({ status: 'approved' }).eq('id', subId);
+        // 2. Deactivate task
+        await _supabase.from('tasks').update({ status: 'completed' }).eq('id', taskId);
+        // 3. Update Balance
+        const { data: prof } = await _supabase.from('profiles').select('balance').eq('id', userId).single();
+        const newBal = (prof?.balance || 0) + rewardAmount;
+        await _supabase.from('profiles').update({ balance: newBal }).eq('id', userId);
+
+        alert("ثبوت اپروو ٿي ويو ۽ يوزر جي بيلنس ۾ پئسا شامل ٿي ويا!");
+        loadSubmissions();
+    }
+
+    document.addEventListener('DOMContentLoaded', checkAdmin);
     </script>
 </body>
 </html>
