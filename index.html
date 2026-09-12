@@ -13,10 +13,10 @@
 
     <div class="max-w-xl mx-auto space-y-5">
 
-        <!-- Header -->
+        <!-- User Header -->
         <header class="bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center">
             <div>
-                <h1 class="font-bold text-slate-800">منھنجو ڊئش بورڊ</h1>
+                <h1 id="user-display-name" class="font-bold text-slate-800">منھنجو ڊئش بورڊ</h1>
                 <p id="user-email" class="text-xs text-slate-400 mt-0.5">لوڊ ٿي رهيو آهي...</p>
                 <button id="logout-btn" onclick="logout()" class="hidden text-[11px] text-red-500 font-bold mt-1 hover:underline">لاگ آئوٽ ٿيو</button>
             </div>
@@ -27,20 +27,42 @@
         </header>
 
         <!-- Auth Block -->
-        <div id="auth-block" class="bg-white p-5 rounded-2xl border shadow-sm space-y-3">
-            <h2 class="font-bold text-center text-sm border-b pb-2">اڪائونٽ لاگ ان / رجسٽر ڪريو</h2>
-            <p id="msg-box" class="text-center text-xs font-bold hidden py-1 rounded-lg"></p>
-
-            <input type="email" id="login-email" placeholder="Email" class="w-full border p-2.5 rounded-xl text-xs outline-none">
-            <input type="password" id="login-pass" placeholder="Password (گهٽ ۾ گهٽ 6 اکر)" class="w-full border p-2.5 rounded-xl text-xs outline-none">
-            
-            <div class="flex gap-2 pt-1">
-                <button onclick="login()" class="w-1/2 bg-blue-600 text-white font-bold py-2 rounded-xl text-xs">لاگ ان ٿيو</button>
-                <button onclick="signup()" class="w-1/2 bg-slate-800 text-white font-bold py-2 rounded-xl text-xs">نئون اڪائونٽ ٺاهيو</button>
+        <div id="auth-block" class="bg-white p-5 rounded-2xl border shadow-sm space-y-4">
+            <!-- Tabs -->
+            <div class="flex border-b text-sm font-bold text-center">
+                <button id="tab-login-btn" onclick="switchTab('login')" class="w-1/2 pb-2 border-b-2 border-blue-600 text-blue-600">لاگ ان ٿيو</button>
+                <button id="tab-signup-btn" onclick="switchTab('signup')" class="w-1/2 pb-2 text-slate-400">نئون اڪائونٽ ٺاهيو</button>
             </div>
+
+            <p id="msg-box" class="text-center text-xs font-bold hidden py-2 rounded-lg"></p>
+
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="event.preventDefault(); login();" class="space-y-3">
+                <input type="email" id="login-email" placeholder="ايميل (Email)" required class="w-full border p-2.5 rounded-xl text-xs outline-none focus:border-blue-500">
+                <input type="password" id="login-pass" placeholder="پاسورڊ (Password)" required class="w-full border p-2.5 rounded-xl text-xs outline-none focus:border-blue-500">
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs hover:bg-blue-700 transition">لاگ ان ٿيو</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" onsubmit="event.preventDefault(); signup();" class="space-y-3 hidden">
+                <div class="flex gap-2">
+                    <input type="text" id="reg-fname" placeholder="پھريون نالو (First Name)" required class="w-1/2 border p-2.5 rounded-xl text-xs outline-none">
+                    <input type="text" id="reg-lname" placeholder="ٻيو نالو (Last Name)" required class="w-1/2 border p-2.5 rounded-xl text-xs outline-none">
+                </div>
+                
+                <div class="flex gap-2 dir-ltr">
+                    <span class="bg-slate-100 border p-2.5 rounded-xl text-xs text-slate-600 font-bold flex items-center">+92</span>
+                    <input type="tel" id="reg-phone" placeholder="3001234567" required class="w-full border p-2.5 rounded-xl text-xs outline-none text-right">
+                </div>
+
+                <input type="email" id="reg-email" placeholder="ايميل (Email)" required class="w-full border p-2.5 rounded-xl text-xs outline-none">
+                <input type="password" id="reg-pass" placeholder="پاسورڊ (گهٽ ۾ گهٽ 6 اکر)" required minlength="6" class="w-full border p-2.5 rounded-xl text-xs outline-none">
+                
+                <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs hover:bg-emerald-700 transition">اڪائونٽ رجسٽر ڪريو</button>
+            </form>
         </div>
 
-        <!-- Tasks Section -->
+        <!-- Dynamic User Tasks Section -->
         <div id="tasks-container" class="hidden space-y-4">
             <h2 class="font-bold text-sm text-slate-700 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span> توھان ڏانھن موڪليل نوان ٽاسڪ
@@ -52,22 +74,35 @@
 
     <script>
     const SUPABASE_URL = 'https://hhywazbkgalioqqpuhyz.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXdhemJrZ2FsaW9xcXB1aHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNDkyNDAsImV4cCI6MjEwMzcyNTI0MH0.p4XMhb5rDPRp76sh6muWFi8oWU0hzkjKqUu_IZJFMTo';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXdhemJrZ2FsaW9xcXB1aHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNDkyNDAsImV4cCI6MjEwMzcyNTI0MH0.yHHUaGrOn8gKy_1kgujNXupqziJZmQalVIS0F9AU0sY';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
 
+    function switchTab(type) {
+        if(type === 'login') {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.getElementById('tab-login-btn').className = "w-1/2 pb-2 border-b-2 border-blue-600 text-blue-600 font-bold";
+            document.getElementById('tab-signup-btn').className = "w-1/2 pb-2 text-slate-400 font-bold";
+        } else {
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('tab-signup-btn').className = "w-1/2 pb-2 border-b-2 border-emerald-600 text-emerald-600 font-bold";
+            document.getElementById('tab-login-btn').className = "w-1/2 pb-2 text-slate-400 font-bold";
+        }
+    }
+
     function showMsg(msg, isError = true) {
         const box = document.getElementById('msg-box');
         box.innerText = msg;
-        box.classList.remove('hidden', 'bg-red-100', 'text-red-600', 'bg-green-100', 'text-green-600');
-        box.classList.add(isError ? 'bg-red-100' : 'bg-green-100', isError ? 'text-red-600' : 'text-green-600');
+        box.classList.remove('hidden', 'bg-red-100', 'text-red-600', 'bg-emerald-100', 'text-emerald-600');
+        box.classList.add(isError ? 'bg-red-100' : 'bg-emerald-100', isError ? 'text-red-600' : 'text-emerald-600');
     }
 
     async function login() {
         const email = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-pass').value.trim();
-        if(!email || !password) return showMsg('مهرباني ڪري ايميل ۽ پاسورڊ داخل ڪريو!');
 
         showMsg('لاگ ان ٿي رهيو آهي...', false);
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
@@ -80,17 +115,31 @@
     }
 
     async function signup() {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-pass').value.trim();
-        if(!email || !password) return showMsg('مهرباني ڪري ايميل ۽ پاسورڊ داخل ڪريو!');
+        const fname = document.getElementById('reg-fname').value.trim();
+        const lname = document.getElementById('reg-lname').value.trim();
+        const phone = '+92' + document.getElementById('reg-phone').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-pass').value.trim();
 
-        showMsg('اڪائونٽ ٺهي رهيو آهي...', false);
-        const { data, error } = await _supabase.auth.signUp({ email, password });
+        showMsg('اڪائونٽ تيار ٿي رهيو آهي...', false);
+        
+        const { data, error } = await _supabase.auth.signUp({ 
+            email, 
+            password,
+            options: {
+                data: { first_name: fname, last_name: lname, phone: phone }
+            }
+        });
 
         if (error) {
             showMsg(error.message, true);
-        } else {
+        } else if (data.user) {
+            // Insert profile details
+            await _supabase.from('profiles').upsert([
+                { id: data.user.id, email: email, first_name: fname, last_name: lname, phone: phone, balance: 0, is_admin: false }
+            ]);
             showMsg('اڪائونٽ ڪاميابي سان ٺهي ويو! هاڻي لاگ ان ٿيو.', false);
+            switchTab('login');
         }
     }
 
@@ -109,11 +158,15 @@
             document.getElementById('user-email').innerText = user.email;
 
             const { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
-            if (profile) document.getElementById('user-balance').innerText = `Rs. ${profile.balance || 0}`;
+            
+            if (profile) {
+                if(profile.first_name) {
+                    document.getElementById('user-display-name').innerText = `${profile.first_name} ${profile.last_name || ''}`;
+                }
+                document.getElementById('user-balance').innerText = `Rs. ${profile.balance || 0}`;
+            }
 
             loadAssignedTasks();
-        } else {
-            document.getElementById('user-email').innerText = 'لاگ ان ٿيل ناهي';
         }
     }
 
